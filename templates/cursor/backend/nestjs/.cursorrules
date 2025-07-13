@@ -1,0 +1,213 @@
+# NestJS Backend Development Rules
+
+## Overview
+This project uses NestJS, a progressive Node.js framework for building efficient, reliable and scalable server-side applications.
+
+## Technology Stack
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: TypeORM/Prisma with PostgreSQL/MySQL
+- **Testing**: Jest
+- **Validation**: class-validator, class-transformer
+- **Documentation**: Swagger/OpenAPI
+
+## Code Style & Best Practices
+
+### File Structure
+```
+src/
+├── app.module.ts
+├── main.ts
+├── modules/
+│   ├── users/
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── users.module.ts
+│   │   ├── dto/
+│   │   │   ├── create-user.dto.ts
+│   │   │   └── update-user.dto.ts
+│   │   └── entities/
+│   │       └── user.entity.ts
+│   └── auth/
+├── common/
+│   ├── decorators/
+│   ├── filters/
+│   ├── guards/
+│   ├── interceptors/
+│   └── pipes/
+└── config/
+```
+
+### Modules
+- Use feature modules to organize code
+- Import dependencies in module decorators
+- Use global modules sparingly
+- Follow single responsibility principle
+
+### Controllers
+- Keep controllers thin, delegate business logic to services
+- Use proper HTTP status codes
+- Implement proper error handling
+- Use DTOs for request/response validation
+
+### Services
+- Implement business logic in services
+- Use dependency injection
+- Make services testable
+- Follow SOLID principles
+
+### DTOs (Data Transfer Objects)
+- Use class-validator for validation
+- Create separate DTOs for create/update operations
+- Use class-transformer for data transformation
+- Document DTO properties with Swagger decorators
+
+### Entities
+- Use TypeORM or Prisma entities
+- Define proper relationships
+- Use decorators for validation and transformation
+- Keep entities focused on data structure
+
+## Example Code Patterns
+
+### Controller Example
+```typescript
+@Controller('users')
+@ApiTags('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create user' })
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user by id' })
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findOne(+id);
+  }
+}
+```
+
+### Service Example
+```typescript
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+}
+```
+
+### DTO Example
+```typescript
+export class CreateUserDto {
+  @ApiProperty({ example: 'john@example.com' })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty({ example: 'password123' })
+  @IsString()
+  @MinLength(6)
+  password: string;
+}
+```
+
+### Entity Example
+```typescript
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  password: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+```
+
+## Dependencies to Consider
+- `@nestjs/common` - Core NestJS functionality
+- `@nestjs/config` - Configuration management
+- `@nestjs/typeorm` - TypeORM integration
+- `@nestjs/swagger` - API documentation
+- `@nestjs/jwt` - JWT authentication
+- `@nestjs/passport` - Authentication strategies
+- `class-validator` - Validation decorators
+- `class-transformer` - Data transformation
+- `bcrypt` - Password hashing
+
+## Testing
+- Use Jest for unit and integration tests
+- Mock dependencies with `@nestjs/testing`
+- Test controllers and services separately
+- Use Test.createTestingModule() for module testing
+- Achieve high test coverage
+
+## Security
+- Use guards for authentication and authorization
+- Implement proper input validation with DTOs
+- Use bcrypt for password hashing
+- Implement rate limiting
+- Use HTTPS in production
+- Sanitize user inputs
+
+## Error Handling
+- Use built-in HTTP exceptions
+- Create custom exception filters
+- Log errors appropriately
+- Return consistent error responses
+- Handle database errors gracefully
+
+## Documentation
+- Use Swagger decorators for API documentation
+- Document all endpoints with @ApiOperation
+- Use @ApiProperty for DTO documentation
+- Keep README updated with setup instructions
+- Document environment variables
+
+## Performance
+- Use caching where appropriate
+- Implement pagination for large datasets
+- Use database indexes
+- Monitor application performance
+- Use connection pooling for databases
+
+## Configuration
+- Use @nestjs/config for environment variables
+- Validate configuration with Joi
+- Use different configs for different environments
+- Keep sensitive data in environment variables 

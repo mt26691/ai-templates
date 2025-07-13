@@ -1,0 +1,123 @@
+# Fastify Backend Development Rules
+
+## Overview
+This project uses Fastify as the web framework for building fast and efficient Node.js web applications.
+
+## Technology Stack
+- **Framework**: Fastify
+- **Language**: JavaScript/TypeScript
+- **Database**: Choose based on project needs (PostgreSQL, MongoDB, etc.)
+- **Testing**: Jest/Tap
+- **Validation**: Ajv (built into Fastify)
+
+## Code Style & Best Practices
+
+### File Structure
+```
+src/
+├── routes/
+│   ├── users.js
+│   └── posts.js
+├── plugins/
+│   ├── db.js
+│   └── auth.js
+├── schemas/
+│   ├── user.js
+│   └── post.js
+├── utils/
+└── app.js
+```
+
+### Routing
+- Use Fastify's built-in routing system
+- Organize routes in separate files under `/routes`
+- Use route prefixes for API versioning
+- Always define schemas for request/response validation
+
+### Plugin System
+- Use Fastify's plugin architecture
+- Register plugins in a logical order
+- Use `fastify-autoload` for automatic plugin loading
+- Follow the encapsulation principle
+
+### Error Handling
+- Use Fastify's built-in error handling
+- Create custom error handlers for different error types
+- Always return appropriate HTTP status codes
+- Log errors appropriately
+
+### Performance
+- Use Fastify's built-in serialization
+- Implement proper caching strategies
+- Use connection pooling for databases
+- Monitor performance with built-in metrics
+
+## Example Code Patterns
+
+### Basic Route
+```javascript
+async function routes(fastify, options) {
+  fastify.get('/', async (request, reply) => {
+    return { hello: 'world' }
+  })
+}
+module.exports = routes
+```
+
+### With Schema Validation
+```javascript
+const schema = {
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      email: { type: 'string', format: 'email' }
+    },
+    required: ['name', 'email']
+  }
+}
+
+fastify.post('/users', { schema }, async (request, reply) => {
+  // Handler logic
+})
+```
+
+### Plugin Example
+```javascript
+const fp = require('fastify-plugin')
+
+async function dbPlugin(fastify, options) {
+  // Database connection logic
+  fastify.decorate('db', db)
+}
+
+module.exports = fp(dbPlugin)
+```
+
+## Dependencies to Consider
+- `@fastify/autoload` - Automatic plugin loading
+- `@fastify/cors` - CORS support
+- `@fastify/helmet` - Security headers
+- `@fastify/jwt` - JWT authentication
+- `@fastify/mongodb` or `@fastify/postgres` - Database connectors
+- `@fastify/swagger` - API documentation
+- `@fastify/rate-limit` - Rate limiting
+
+## Testing
+- Use Fastify's built-in testing utilities
+- Test routes with `fastify.inject()`
+- Mock external dependencies
+- Achieve high test coverage
+
+## Security
+- Always validate input with schemas
+- Use `@fastify/helmet` for security headers
+- Implement proper authentication/authorization
+- Sanitize user inputs
+- Use HTTPS in production
+
+## Documentation
+- Use `@fastify/swagger` for API documentation
+- Document all route schemas
+- Keep README updated with setup instructions
+- Document environment variables and configuration 
