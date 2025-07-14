@@ -1,0 +1,10 @@
+---
+description: Testing
+globs:
+alwaysApply: false
+---
+
+- Use Jest for unit and integration tests
+- Mock dependencies with `@nestjs/testing`
+- Test controllers and services separately
+- Achieve high test coverage (>70% coverage)

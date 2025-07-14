@@ -12,13 +12,6 @@
 - `class-transformer` – Data transformation
 - `bcrypt` – Password hashing
 
-## Testing
-
-- Use Jest for unit and integration tests
-- Mock dependencies with `@nestjs/testing`
-- Test controllers and services separately
-- Achieve high test coverage
-
 ## Security
 
 - Use guards for authentication and authorization
@@ -31,11 +24,6 @@
 - Use built-in HTTP exceptions
 - Create custom exception filters
 - Return consistent error responses
-
-## Documentation
-
-- Use Swagger decorators for API documentation
-- Document all endpoints with `@ApiOperation`
 
 ## Performance & Configuration
 

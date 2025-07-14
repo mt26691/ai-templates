@@ -1,0 +1,16 @@
+---
+description: rules to define entities for nestjs
+globs: /src/**/*.entity.ts
+alwaysApply: true
+---
+
+- **Preferred ORM**: Use **TypeORM** entities (the default for Cursor templates). If you must use Prisma, keep schema files under `prisma/` and never mix ORMs in the same service.
+- **Naming**: Use _snake_case_ for table and column names. Bind the entity to the table with `@Entity({ name: 'table_name' })`.
+- **Primary Keys**: Declare a single primary key with `@PrimaryGeneratedColumn('uuid')` (or composite keys only when unavoidable). Name the PK constraint `{table_name}_pk`.
+- **Indexes**: Create indexes with `@Index` and name them `{table_name}_{column_name}_idx`. Use multi-column indexes when performance requires it.
+- **Unique Constraints**: Declare unique constraints with `@Unique` and name them `{table_name}_{column_name}_unique_key`.
+- **Foreign Keys & Relations**: Model relationships with `@ManyToOne`, `@OneToMany`, `@OneToOne`, etc. Name FK constraints `{table_name}_{referenced_table}_fk` and always specify `onDelete` / `onUpdate` behaviour (`CASCADE`, `RESTRICT`, etc.).
+- **Audit Columns**: Include `@CreateDateColumn`, `@UpdateDateColumn`, and (optionally) `@DeleteDateColumn` for soft deletes. Store all timestamps in UTC.
+- **Column Options**: Set explicit column types (`uuid`, `varchar`, `timestamp with time zone`, etc.) and specify `length`, `precision`, and `scale` where relevant to avoid database defaults.
+- **Pure Data Structures**: Keep entities free of business logic—no service calls or complex computations inside entities. Lightweight computed getters are acceptable.
+- **File Naming**: Every entity lives in its own file and the filename ends with `.entity.ts` (e.g., `user.entity.ts`).

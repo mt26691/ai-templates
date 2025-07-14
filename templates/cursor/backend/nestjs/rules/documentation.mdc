@@ -1,0 +1,13 @@
+---
+title: Documentation Rules
+glob: /src/**/*.ts
+alwaysApply: true
+---
+
+- Use Swagger decorators (e.g., `@ApiTags`, `@ApiOperation`, `@ApiResponse`) for API documentation
+- Provide a concise `@ApiOperation` summary and description for every endpoint
+- Whenever you create or modify an endpoint, update its Swagger decorators and related DTOs so that the generated OpenAPI spec remains accurate
+- Place architectural diagrams or any non-API documentation under the `/docs` directory
+- Ensure the documentation generation script (e.g., `npm run docs:generate`) runs without errors before opening a pull request
+
+---
