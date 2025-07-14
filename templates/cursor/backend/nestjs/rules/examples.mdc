@@ -1,0 +1,54 @@
+# Example Code Patterns
+
+### Controller Example
+
+```typescript
+@Controller('users')
+@ApiTags('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create user' })
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user by id' })
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findOne(+id);
+  }
+}
+```
+
+### Service Example
+
+```typescript
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(user);
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+}
+```
+
+description:
+globs:
+alwaysApply: false
+
+---

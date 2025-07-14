@@ -1,0 +1,50 @@
+# Additional Guidelines
+
+## Dependencies to Consider
+
+- `@nestjs/common` – Core NestJS functionality
+- `@nestjs/config` – Configuration management
+- `@nestjs/typeorm` – TypeORM integration
+- `@nestjs/swagger` – API documentation
+- `@nestjs/jwt` – JWT authentication
+- `@nestjs/passport` – Authentication strategies
+- `class-validator` – Validation decorators
+- `class-transformer` – Data transformation
+- `bcrypt` – Password hashing
+
+## Testing
+
+- Use Jest for unit and integration tests
+- Mock dependencies with `@nestjs/testing`
+- Test controllers and services separately
+- Achieve high test coverage
+
+## Security
+
+- Use guards for authentication and authorization
+- Implement proper input validation with DTOs
+- Hash passwords with bcrypt
+- Sanitize user inputs
+
+## Error Handling
+
+- Use built-in HTTP exceptions
+- Create custom exception filters
+- Return consistent error responses
+
+## Documentation
+
+- Use Swagger decorators for API documentation
+- Document all endpoints with `@ApiOperation`
+
+## Performance & Configuration
+
+- Use caching where appropriate
+- Implement pagination for large datasets
+- Validate configuration with Joi
+- Keep sensitive data in environment variables
+  description:
+  globs:
+  alwaysApply: false
+
+---

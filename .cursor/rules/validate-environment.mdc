@@ -1,0 +1,7 @@
+---
+description: 'Validate environment variables with Zod'
+alwaysApply: true
+---
+
+- Create an `env.ts` module that parses `process.env` with **Zod**.
+- The script must fail fast on missing or invalid variables.

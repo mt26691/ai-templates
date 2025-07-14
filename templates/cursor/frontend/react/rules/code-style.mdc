@@ -1,0 +1,29 @@
+# Code Style & Best Practices
+
+### Component Structure
+
+- Use functional components with hooks
+- Prefer TypeScript for type safety
+- Use PascalCase for component names
+- Keep components small and focused
+
+### Hooks
+
+- Use built-in hooks (`useState`, `useEffect`, etc.)
+- Create custom hooks for reusable logic
+
+### State Management
+
+- Use local state for component-specific data
+- Use Context API for app-wide state
+
+### Styling
+
+- Use consistent naming conventions
+- Prefer CSS Modules or styled-components
+- Follow accessibility guidelines
+  description:
+  globs:
+  alwaysApply: false
+
+---

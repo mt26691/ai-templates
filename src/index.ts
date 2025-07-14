@@ -124,6 +124,18 @@ export class TemplateGenerator {
 
     try {
       await fs.copy(templatePath, outputDir);
+
+      // Post-process Cursor templates: migrate .cursorrules to the new .cursor/rules structure
+      if (ai === 'cursor') {
+        const oldRulesPath = path.join(outputDir, '.cursorrules');
+        if (await fs.pathExists(oldRulesPath)) {
+          const rulesDir = path.join(outputDir, 'rules');
+          await fs.ensureDir(rulesDir);
+          const newRulesPath = path.join(rulesDir, 'rules.mdc');
+          await fs.move(oldRulesPath, newRulesPath, { overwrite: true });
+        }
+      }
+
       console.log(
         chalk.green(
           `✅ Successfully generated ${ai} template for ${framework}!`

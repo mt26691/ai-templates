@@ -50,7 +50,7 @@ The tool will guide you through three simple steps:
 
 ## Supported Templates
 
-### Cursor (.cursorrules)
+### Cursor (.cursor/rules/\*.mdc)
 
 - **Backend**: Fastify, NestJS, Koa, Express, Hapi
 - **Frontend**: React, Vue, Angular, Svelte, Next.js
@@ -109,7 +109,8 @@ The generated templates will be created in a directory named after the selected 
 ```
 your-project/
 ├── .cursor/          # Cursor templates
-│   └── .cursorrules
+│   └── rules/
+│       └── rules.mdc
 ├── .claude/          # Claude templates
 │   └── project_knowledge.md
 └── .gemini/          # Gemini templates

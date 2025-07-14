@@ -39,11 +39,18 @@ async function testCLI() {
 
     // Check if the template was generated
     const cursorDir = path.join(testDir, '.cursor');
-    const cursorRules = path.join(cursorDir, '.cursorrules');
+    const rulesDir = path.join(cursorDir, 'rules');
 
-    if (await fs.pathExists(cursorRules)) {
+    let mdcFiles = [];
+    if (await fs.pathExists(rulesDir)) {
+      mdcFiles = await fs.readdir(rulesDir);
+    }
+
+    const mdcFile = mdcFiles.find((file) => file.endsWith('.mdc'));
+
+    if (mdcFile) {
       console.log('✅ Test 1 PASSED: Cursor template generated successfully');
-      const content = await fs.readFile(cursorRules, 'utf8');
+      const content = await fs.readFile(path.join(rulesDir, mdcFile), 'utf8');
       console.log(
         `📄 Template content preview: ${content.substring(0, 100)}...`
       );

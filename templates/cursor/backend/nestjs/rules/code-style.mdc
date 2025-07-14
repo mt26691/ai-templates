@@ -1,0 +1,67 @@
+# Code Style & Best Practices
+
+### File Structure
+
+```
+src/
+├── app.module.ts
+├── main.ts
+├── modules/
+│   ├── users/
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── users.module.ts
+│   │   ├── dto/
+│   │   │   ├── create-user.dto.ts
+│   │   │   └── update-user.dto.ts
+│   │   └── entities/
+│   │       └── user.entity.ts
+│   └── auth/
+├── common/
+│   ├── decorators/
+│   ├── filters/
+│   ├── guards/
+│   ├── interceptors/
+│   └── pipes/
+└── config/
+```
+
+### Modules
+
+- Use feature modules to organize code
+- Import dependencies in module decorators
+- Use global modules sparingly
+- Follow single responsibility principle
+
+### Controllers
+
+- Keep controllers thin, delegate business logic to services
+- Use proper HTTP status codes
+- Implement proper error handling
+- Use DTOs for request/response validation
+
+### Services
+
+- Implement business logic in services
+- Use dependency injection
+- Make services testable
+- Follow SOLID principles
+
+### DTOs
+
+- Use class-validator for validation
+- Create separate DTOs for create/update operations
+- Use class-transformer for data transformation
+- Document DTO properties with Swagger decorators
+
+### Entities
+
+- Use TypeORM or Prisma entities
+- Define proper relationships
+- Use decorators for validation and transformation
+- Keep entities focused on data structure
+  description:
+  globs:
+  alwaysApply: false
+
+---

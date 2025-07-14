@@ -1,0 +1,19 @@
+# NestJS Backend Development Rules – Overview & Tech Stack
+
+## Overview
+
+This project uses NestJS, a progressive Node.js framework for building efficient, reliable and scalable server-side applications.
+
+## Technology Stack
+
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: TypeORM/Prisma with PostgreSQL/MySQL
+- **Testing**: Jest
+- **Validation**: class-validator, class-transformer
+- **Documentation**: Swagger/OpenAPI
+  description:
+  globs:
+  alwaysApply: false
+
+---

@@ -1,0 +1,20 @@
+# React Frontend Development – Overview & Tech Stack
+
+## Overview
+
+This project uses React for building modern, interactive user interfaces with a focus on component-based architecture and functional programming.
+
+## Technology Stack
+
+- **Framework**: React 18+
+- **Language**: TypeScript/JavaScript
+- **State Management**: Context API / Redux Toolkit / Zustand
+- **Styling**: CSS Modules / Styled Components / Tailwind CSS
+- **Testing**: Jest, React Testing Library
+- **Build Tool**: Vite / Create React App
+- **Router**: React Router
+  description:
+  globs:
+  alwaysApply: false
+
+---
