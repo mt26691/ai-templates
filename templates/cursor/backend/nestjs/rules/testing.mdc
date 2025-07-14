@@ -4,7 +4,15 @@ globs:
 alwaysApply: false
 ---
 
+- Follow the Arrange-Act-Assert convention for tests.
 - Use Jest for unit and integration tests
 - Mock dependencies with `@nestjs/testing`
 - Test controllers and services separately
-- Achieve high test coverage (>70% coverage)
+- Achieve high test coverage (>80% coverage)
+- Name test variables clearly.
+  - Follow the convention: inputX, mockX, actualX, expectedX, etc.
+- Write unit tests for each public function.
+  - Use test doubles to simulate dependencies.
+    - Except for third-party dependencies that are not expensive to execute.
+- Write acceptance tests for each module.
+  - Follow the Given-When-Then convention.
