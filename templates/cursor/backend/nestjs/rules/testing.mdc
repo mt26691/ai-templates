@@ -1,6 +1,6 @@
 ---
 description: Testing
-globs:
+globs: **/*.{test,spec}.ts
 alwaysApply: false
 ---
 
@@ -16,3 +16,27 @@ alwaysApply: false
     - Except for third-party dependencies that are not expensive to execute.
 - Write acceptance tests for each module.
   - Follow the Given-When-Then convention.
+
+## Database Testing Best Practices
+
+- Use Testcontainers for integration tests
+  - Spin up real database instances (PostgreSQL, MySQL, MongoDB, etc.)
+  - Ensures tests run against actual database engines
+  - Example: `@testcontainers/postgresql` for PostgreSQL testing
+- Create isolated test databases
+  - Each test suite should use a separate database/schema
+  - Prevents test interference and ensures clean state
+  - Use unique database names with timestamps or UUIDs
+- Implement proper test data seeding
+  - Create factories for test data generation
+  - Use fixtures for consistent test scenarios
+  - Clear and seed database before each test suite
+  - Example: Use TypeORM factories or custom seed scripts
+- Transaction rollback strategy
+  - Wrap each test in a transaction that rolls back
+  - Maintains database cleanliness between tests
+  - Faster than truncating tables
+- E2E testing with real databases
+  - Use Docker Compose for multi-container setups
+  - Include all required services (Redis, Elasticsearch, etc.)
+  - Mirror production environment as closely as possible

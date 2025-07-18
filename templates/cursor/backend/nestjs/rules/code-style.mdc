@@ -30,11 +30,11 @@ src/
 
 - Use English for all code and documentation.
 - Always declare the type of each variable and function (parameters and return value).
-  - Avoid using any.
+  - Avoid using any at all costs.
   - Create necessary types.
 - Use JSDoc to document public classes and methods.
 - Don't leave blank lines within a function.
-- One export per file.
+- Never use `export default`
 
 ### Modules
 
@@ -67,7 +67,7 @@ src/
 ### Functions
 
 - In this context, what is understood as a function will also apply to a method.
-- Write short functions with a single purpose. Less than 200 instructions.
+- Write short functions with a single purpose. Less than 250 lines of code.
 - We preferred the pure function, since it is easier to understand and test
 - Always add the tests for function
 - Name functions with a verb and something else.
