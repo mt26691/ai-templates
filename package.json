@@ -1,6 +1,6 @@
 {
   "name": "ai-templates",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool for generating AI templates for different frameworks and tools",
   "main": "dist/index.js",
   "bin": {
