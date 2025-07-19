@@ -177,7 +177,7 @@ We welcome contributions from the community! This is an open-source project and 
 
 If you're not comfortable with creating a pull request or want to discuss an idea first:
 
-1. **Open an Issue** on our [GitHub Issues](https://github.com/yourusername/ai-templates-cli/issues)
+1. **Open an Issue** on our [GitHub Issues](https://github.com/mt26691/ai-templates-cli/issues)
 2. Use the appropriate issue template:
    - 🐛 Bug Report
    - ✨ Feature Request
@@ -200,20 +200,10 @@ If you're not comfortable with creating a pull request or want to discuss an ide
 - **Testing**: Add tests for new functionality when applicable
 - **Documentation**: Update README.md if you're adding new features
 
-### What We're Looking For
-
-- 🎯 New AI tool support (e.g., GitHub Copilot, Amazon CodeWhisperer)
-- 📦 Additional framework templates
-- 🐛 Bug fixes and improvements
-- 📚 Documentation enhancements
-- 🌐 Internationalization support
-- ⚡ Performance optimizations
-
 ## 📬 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ai-templates-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-templates-cli/discussions)
-- **Email**: support@example.com (optional)
+- **Issues**: [GitHub Issues](https://github.com/mt26691/ai-templates-cli/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/mt26691/ai-templates-cli/discussions)
 
 ### Priority Support
 
