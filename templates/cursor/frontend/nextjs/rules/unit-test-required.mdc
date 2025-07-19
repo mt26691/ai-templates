@@ -1,0 +1,273 @@
+---
+description: Unit testing requirements and best practices for Next.js
+globs: **/*.{test,spec}.{ts,tsx,js,jsx}
+alwaysApply: true
+---
+
+# Unit Testing Requirements
+
+## Test Coverage Requirements
+
+### Minimum Coverage Thresholds
+```json
+// jest.config.js
+module.exports = {
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
+}
+```
+
+### Required Test Types
+- Unit tests for all utility functions
+- Component tests for all React components
+- Integration tests for API routes
+- E2E tests for critical user flows
+
+## Component Testing
+
+### Testing Library Setup
+```typescript
+// test-utils.tsx
+import { render, RenderOptions } from '@testing-library/react'
+import { ReactElement } from 'react'
+
+const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        {children}
+      </AuthProvider>
+    </ThemeProvider>
+  )
+}
+
+const customRender = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>
+) => render(ui, { wrapper: AllTheProviders, ...options })
+
+export * from '@testing-library/react'
+export { customRender as render }
+```
+
+### Component Test Example
+```typescript
+// Button.test.tsx
+import { render, screen, fireEvent } from '@/test-utils'
+import { Button } from './Button'
+
+describe('Button', () => {
+  it('should render with text', () => {
+    render(<Button>Click me</Button>)
+    expect(screen.getByText('Click me')).toBeInTheDocument()
+  })
+
+  it('should handle click events', () => {
+    const handleClick = jest.fn()
+    render(<Button onClick={handleClick}>Click me</Button>)
+    
+    fireEvent.click(screen.getByText('Click me'))
+    expect(handleClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('should be disabled when disabled prop is true', () => {
+    render(<Button disabled>Click me</Button>)
+    expect(screen.getByText('Click me')).toBeDisabled()
+  })
+})
+```
+
+## Hook Testing
+
+### Custom Hook Tests
+```typescript
+// useCounter.test.ts
+import { renderHook, act } from '@testing-library/react'
+import { useCounter } from './useCounter'
+
+describe('useCounter', () => {
+  it('should increment counter', () => {
+    const { result } = renderHook(() => useCounter())
+    
+    act(() => {
+      result.current.increment()
+    })
+    
+    expect(result.current.count).toBe(1)
+  })
+})
+```
+
+## API Route Testing
+
+### Route Handler Tests
+```typescript
+// app/api/users/route.test.ts
+import { GET, POST } from './route'
+import { NextRequest } from 'next/server'
+
+describe('/api/users', () => {
+  describe('GET', () => {
+    it('should return users list', async () => {
+      const request = new NextRequest('http://localhost:3000/api/users')
+      const response = await GET(request)
+      const data = await response.json()
+      
+      expect(response.status).toBe(200)
+      expect(Array.isArray(data.users)).toBe(true)
+    })
+  })
+
+  describe('POST', () => {
+    it('should create new user', async () => {
+      const request = new NextRequest('http://localhost:3000/api/users', {
+        method: 'POST',
+        body: JSON.stringify({ name: 'Test User', email: 'test@example.com' }),
+      })
+      
+      const response = await POST(request)
+      const data = await response.json()
+      
+      expect(response.status).toBe(201)
+      expect(data.user.name).toBe('Test User')
+    })
+  })
+})
+```
+
+## Server Component Testing
+
+### Testing Server Components
+```typescript
+// ServerComponent.test.tsx
+import { render } from '@testing-library/react'
+import { ServerComponent } from './ServerComponent'
+
+// Mock Next.js specific features
+jest.mock('next/headers', () => ({
+  cookies: () => ({
+    get: jest.fn(),
+  }),
+}))
+
+describe('ServerComponent', () => {
+  it('should render server data', async () => {
+    const component = await ServerComponent({ id: '123' })
+    const { getByText } = render(component)
+    
+    expect(getByText('Server rendered content')).toBeInTheDocument()
+  })
+})
+```
+
+## Test Organization
+
+### File Structure
+```
+src/
+  components/
+    Button/
+      Button.tsx
+      Button.test.tsx
+      Button.stories.tsx
+  hooks/
+    useAuth/
+      useAuth.ts
+      useAuth.test.ts
+  utils/
+    formatters/
+      formatters.ts
+      formatters.test.ts
+```
+
+### Test Naming Conventions
+- Test files: `*.test.{ts,tsx}` or `*.spec.{ts,tsx}`
+- Test suites: Describe the component/function name
+- Test cases: Start with "should" for clarity
+- Use descriptive names that explain the behavior
+
+## Mocking Best Practices
+
+### Module Mocking
+```typescript
+// Mock Next.js modules
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: jest.fn(),
+  }),
+}))
+
+// Mock external libraries
+jest.mock('@/lib/api', () => ({
+  fetchUser: jest.fn().mockResolvedValue({ id: 1, name: 'Test User' }),
+}))
+```
+
+### Data Mocking
+```typescript
+// test/mocks/user.ts
+export const mockUser = {
+  id: '123',
+  name: 'Test User',
+  email: 'test@example.com',
+  role: 'USER',
+}
+
+// test/factories/user.ts
+export const createMockUser = (overrides = {}) => ({
+  ...mockUser,
+  ...overrides,
+})
+```
+
+## Continuous Integration
+
+### GitHub Actions Example
+```yaml
+name: Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npm test -- --coverage
+      - uses: codecov/codecov-action@v3
+```
+
+### Pre-commit Hooks
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test -- --findRelatedTests"
+    }
+  }
+}
+```
+
+## Testing Checklist
+
+- [ ] All components have corresponding test files
+- [ ] All utility functions are tested
+- [ ] API routes have integration tests
+- [ ] Critical paths have E2E tests
+- [ ] Test coverage meets minimum thresholds
+- [ ] Tests run in CI/CD pipeline
+- [ ] Mocks are properly maintained
+- [ ] Test data is isolated and deterministic

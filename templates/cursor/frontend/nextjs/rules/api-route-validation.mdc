@@ -1,0 +1,354 @@
+---
+description: API route validation and security best practices for Next.js
+globs: app/api/**/route.{ts,js},pages/api/**/*.{ts,js}
+alwaysApply: true
+---
+
+# API Route Validation
+
+## Input Validation with Zod
+
+### Basic Route Validation
+```typescript
+// app/api/users/route.ts
+import { z } from 'zod'
+import { NextRequest, NextResponse } from 'next/server'
+
+const createUserSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  age: z.number().int().positive().max(150),
+  role: z.enum(['user', 'admin']).default('user'),
+})
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validatedData = createUserSchema.parse(body)
+    
+    // Process validated data
+    const user = await createUser(validatedData)
+    
+    return NextResponse.json(user, { status: 201 })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      )
+    }
+    
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+```
+
+### Query Parameter Validation
+```typescript
+// app/api/products/route.ts
+const searchParamsSchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(20),
+  sort: z.enum(['asc', 'desc']).default('asc'),
+  category: z.string().optional(),
+})
+
+export async function GET(request: NextRequest) {
+  const searchParams = Object.fromEntries(request.nextUrl.searchParams)
+  
+  try {
+    const { page, limit, sort, category } = searchParamsSchema.parse(searchParams)
+    
+    const products = await getProducts({ page, limit, sort, category })
+    
+    return NextResponse.json({
+      data: products,
+      pagination: {
+        page,
+        limit,
+        total: products.total,
+      },
+    })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: error.errors },
+        { status: 400 }
+      )
+    }
+  }
+}
+```
+
+## Middleware Validation
+
+### Route Middleware
+```typescript
+// middleware.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { verifyAuth } from '@/lib/auth'
+
+export async function middleware(request: NextRequest) {
+  // API route protection
+  if (request.nextUrl.pathname.startsWith('/api/admin')) {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '')
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+    
+    const payload = await verifyAuth(token)
+    if (!payload || payload.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Insufficient permissions' },
+        { status: 403 }
+      )
+    }
+  }
+  
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: '/api/:path*',
+}
+```
+
+## Error Handling
+
+### Centralized Error Handler
+```typescript
+// lib/api-error.ts
+export class ApiError extends Error {
+  constructor(
+    public statusCode: number,
+    public message: string,
+    public details?: any
+  ) {
+    super(message)
+  }
+}
+
+// lib/error-handler.ts
+export function handleApiError(error: unknown): NextResponse {
+  console.error('API Error:', error)
+  
+  if (error instanceof ApiError) {
+    return NextResponse.json(
+      { error: error.message, details: error.details },
+      { status: error.statusCode }
+    )
+  }
+  
+  if (error instanceof z.ZodError) {
+    return NextResponse.json(
+      { error: 'Validation failed', details: error.errors },
+      { status: 400 }
+    )
+  }
+  
+  return NextResponse.json(
+    { error: 'Internal server error' },
+    { status: 500 }
+  )
+}
+```
+
+### Using Error Handler
+```typescript
+// app/api/protected/route.ts
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const validated = schema.parse(body)
+    
+    if (!isAuthorized(request)) {
+      throw new ApiError(403, 'Forbidden')
+    }
+    
+    const result = await performAction(validated)
+    return NextResponse.json(result)
+  } catch (error) {
+    return handleApiError(error)
+  }
+}
+```
+
+## Rate Limiting
+
+### Simple Rate Limiter
+```typescript
+// lib/rate-limit.ts
+import { LRUCache } from 'lru-cache'
+
+type Options = {
+  uniqueTokenPerInterval?: number
+  interval?: number
+}
+
+export function rateLimit(options?: Options) {
+  const tokenCache = new LRUCache({
+    max: options?.uniqueTokenPerInterval || 500,
+    ttl: options?.interval || 60000,
+  })
+
+  return {
+    check: (token: string, limit: number) => {
+      const tokenCount = (tokenCache.get(token) as number[]) || [0]
+      if (tokenCount[0] === 0) {
+        tokenCache.set(token, tokenCount)
+      }
+      tokenCount[0] += 1
+
+      const currentUsage = tokenCount[0]
+      const isRateLimited = currentUsage > limit
+      return { isRateLimited, currentUsage, limit }
+    },
+  }
+}
+```
+
+### Using Rate Limiter
+```typescript
+// app/api/public/route.ts
+const limiter = rateLimit({
+  interval: 60 * 1000, // 60 seconds
+  uniqueTokenPerInterval: 500,
+})
+
+export async function POST(request: NextRequest) {
+  const ip = request.ip ?? 'anonymous'
+  const { isRateLimited } = limiter.check(ip, 10) // 10 requests per minute
+  
+  if (isRateLimited) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429 }
+    )
+  }
+  
+  // Process request
+}
+```
+
+## Security Headers
+
+### Setting Security Headers
+```typescript
+// app/api/secure/route.ts
+export async function GET(request: NextRequest) {
+  const response = NextResponse.json({ data: 'secure data' })
+  
+  // Security headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  
+  // CORS headers
+  response.headers.set('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*')
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
+  return response
+}
+```
+
+## Request/Response Types
+
+### Type-Safe API Routes
+```typescript
+// types/api.ts
+export type ApiResponse<T = any> = {
+  data?: T
+  error?: string
+  details?: any
+}
+
+// app/api/typed/route.ts
+type CreateUserRequest = z.infer<typeof createUserSchema>
+type CreateUserResponse = ApiResponse<{ user: User }>
+
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<CreateUserResponse>> {
+  try {
+    const body: CreateUserRequest = await request.json()
+    const validated = createUserSchema.parse(body)
+    
+    const user = await createUser(validated)
+    
+    return NextResponse.json({ data: { user } })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to create user' },
+      { status: 400 }
+    )
+  }
+}
+```
+
+## Testing API Routes
+
+### Route Testing Example
+```typescript
+// __tests__/api/users.test.ts
+import { POST } from '@/app/api/users/route'
+import { NextRequest } from 'next/server'
+
+describe('/api/users', () => {
+  it('should create user with valid data', async () => {
+    const request = new NextRequest('http://localhost:3000/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Test User',
+        email: 'test@example.com',
+        age: 25,
+      }),
+    })
+    
+    const response = await POST(request)
+    const data = await response.json()
+    
+    expect(response.status).toBe(201)
+    expect(data.user).toHaveProperty('id')
+    expect(data.user.name).toBe('Test User')
+  })
+  
+  it('should reject invalid email', async () => {
+    const request = new NextRequest('http://localhost:3000/api/users', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: 'Test',
+        email: 'invalid-email',
+        age: 25,
+      }),
+    })
+    
+    const response = await POST(request)
+    expect(response.status).toBe(400)
+  })
+})
+```
+
+## Best Practices Checklist
+
+- [ ] Always validate input data with Zod or similar
+- [ ] Implement proper error handling
+- [ ] Use TypeScript for type safety
+- [ ] Add rate limiting for public endpoints
+- [ ] Set appropriate security headers
+- [ ] Implement authentication/authorization
+- [ ] Log errors for monitoring
+- [ ] Write tests for all endpoints
+- [ ] Document API with OpenAPI/Swagger
+- [ ] Handle CORS properly
+- [ ] Sanitize user inputs
+- [ ] Use HTTPS in production

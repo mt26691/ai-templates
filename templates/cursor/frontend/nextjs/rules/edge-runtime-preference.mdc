@@ -1,0 +1,333 @@
+---
+description: Edge Runtime optimization and usage guidelines for Next.js
+globs: app/**/route.{ts,js},app/**/page.{tsx,jsx},middleware.{ts,js}
+alwaysApply: false
+---
+
+# Edge Runtime Preference
+
+## When to Use Edge Runtime
+
+### Ideal Use Cases
+```typescript
+// ✅ Good - API routes with low latency requirements
+export const runtime = 'edge' // Enable Edge Runtime
+
+export async function GET(request: Request) {
+  // Simple data transformations
+  const data = await fetch('https://api.example.com/data')
+  const json = await data.json()
+  
+  // Quick response
+  return Response.json({
+    processed: json.items.map(item => item.name),
+    timestamp: Date.now(),
+  })
+}
+```
+
+### Authentication & Authorization
+```typescript
+// middleware.ts - Perfect for Edge Runtime
+export const config = {
+  matcher: ['/api/:path*', '/dashboard/:path*'],
+}
+
+export async function middleware(request: NextRequest) {
+  const token = request.cookies.get('auth-token')
+  
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+  
+  // Verify JWT without external dependencies
+  const isValid = await verifyJWT(token.value)
+  
+  if (!isValid) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+  
+  return NextResponse.next()
+}
+```
+
+## Edge Runtime Limitations
+
+### Unsupported Node.js APIs
+```typescript
+// ❌ Bad - These won't work in Edge Runtime
+export const runtime = 'edge'
+
+export async function POST(request: Request) {
+  // ❌ No file system access
+  const fs = require('fs')
+  
+  // ❌ No child processes
+  const { exec } = require('child_process')
+  
+  // ❌ No native Node.js modules
+  const crypto = require('crypto')
+  
+  // ❌ Many npm packages won't work
+  const bcrypt = require('bcrypt')
+}
+
+// ✅ Good - Use Web APIs instead
+export async function POST(request: Request) {
+  // ✅ Web Crypto API
+  const encoder = new TextEncoder()
+  const data = encoder.encode('Hello')
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  
+  // ✅ Fetch API
+  const response = await fetch('https://api.example.com')
+  
+  // ✅ Web Streams
+  const stream = response.body
+}
+```
+
+## Performance Optimization
+
+### Streaming Responses
+```typescript
+// Edge Runtime with streaming
+export const runtime = 'edge'
+
+export async function GET() {
+  const encoder = new TextEncoder()
+  
+  const stream = new ReadableStream({
+    async start(controller) {
+      // Stream data chunks
+      for (let i = 0; i < 10; i++) {
+        const chunk = encoder.encode(`Data chunk ${i}\n`)
+        controller.enqueue(chunk)
+        
+        // Simulate async work
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+      
+      controller.close()
+    },
+  })
+  
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Transfer-Encoding': 'chunked',
+    },
+  })
+}
+```
+
+### Caching Strategies
+```typescript
+// Edge Runtime with caching
+export const runtime = 'edge'
+
+export async function GET(request: Request) {
+  const cache = caches.default
+  const cacheKey = new Request(request.url, request)
+  
+  // Check cache
+  const cachedResponse = await cache.match(cacheKey)
+  if (cachedResponse) {
+    return cachedResponse
+  }
+  
+  // Fetch fresh data
+  const data = await fetchData()
+  const response = Response.json(data, {
+    headers: {
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+    },
+  })
+  
+  // Store in cache
+  await cache.put(cacheKey, response.clone())
+  
+  return response
+}
+```
+
+## Edge-Compatible Libraries
+
+### Using Edge-Compatible Packages
+```typescript
+// ✅ Good - Edge-compatible JWT
+import { SignJWT, jwtVerify } from 'jose'
+
+export const runtime = 'edge'
+
+export async function POST(request: Request) {
+  const { username, password } = await request.json()
+  
+  // Validate credentials (simplified)
+  if (isValidUser(username, password)) {
+    // Create JWT with jose (Edge-compatible)
+    const token = await new SignJWT({ sub: username })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('2h')
+      .sign(new TextEncoder().encode(process.env.JWT_SECRET))
+    
+    return Response.json({ token })
+  }
+  
+  return Response.json({ error: 'Invalid credentials' }, { status: 401 })
+}
+```
+
+### Database Connections
+```typescript
+// ✅ Good - Edge-compatible database clients
+import { createClient } from '@vercel/edge-config'
+import { createClient as createRedisClient } from '@vercel/kv'
+
+export const runtime = 'edge'
+
+const edgeConfig = createClient()
+const kv = createRedisClient()
+
+export async function GET() {
+  // Edge Config for feature flags
+  const features = await edgeConfig.get('features')
+  
+  // KV for caching
+  const cached = await kv.get('popular-items')
+  
+  if (cached) {
+    return Response.json(cached)
+  }
+  
+  // Fetch and cache
+  const data = await fetchPopularItems()
+  await kv.set('popular-items', data, { ex: 300 }) // 5 min TTL
+  
+  return Response.json(data)
+}
+```
+
+## Conditional Runtime Selection
+
+### Dynamic Runtime Selection
+```typescript
+// Use Node.js runtime for complex operations
+export const runtime = process.env.USE_EDGE === 'true' ? 'edge' : 'nodejs'
+
+// Or based on feature requirements
+export const runtime = needsFileSystem() ? 'nodejs' : 'edge'
+```
+
+### Route Segment Config
+```typescript
+// app/api/fast/route.ts
+export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
+export const revalidate = 60
+
+// app/api/heavy/route.ts
+export const runtime = 'nodejs' // Default
+export const maxDuration = 60 // Longer timeout for Node.js
+```
+
+## Middleware Best Practices
+
+### Efficient Middleware
+```typescript
+// middleware.ts
+import { NextRequest, NextResponse } from 'next/server'
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\..*).)',
+  ],
+}
+
+export async function middleware(request: NextRequest) {
+  // Geo-location based routing
+  const country = request.geo?.country || 'US'
+  
+  // A/B testing
+  const bucket = request.cookies.get('ab-bucket')?.value || 'a'
+  
+  // Add headers
+  const response = NextResponse.next()
+  response.headers.set('x-country', country)
+  response.headers.set('x-ab-bucket', bucket)
+  
+  return response
+}
+```
+
+## Monitoring and Debugging
+
+### Edge Runtime Metrics
+```typescript
+export const runtime = 'edge'
+
+export async function GET(request: Request) {
+  const start = Date.now()
+  
+  try {
+    const data = await processRequest(request)
+    
+    // Log performance metrics
+    console.log({
+      duration: Date.now() - start,
+      url: request.url,
+      region: request.headers.get('x-vercel-id'),
+    })
+    
+    return Response.json(data)
+  } catch (error) {
+    // Edge Runtime logging
+    console.error('Edge function error:', error)
+    
+    return Response.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    )
+  }
+}
+```
+
+## Decision Matrix
+
+### When to Use Edge Runtime
+- ✅ Authentication/authorization checks
+- ✅ Request routing and redirects
+- ✅ API response transformation
+- ✅ Geo-location based logic
+- ✅ A/B testing logic
+- ✅ Rate limiting
+- ✅ Simple data fetching and caching
+
+### When to Use Node.js Runtime
+- ✅ Database ORM operations (Prisma, TypeORM)
+- ✅ File system operations
+- ✅ Heavy computational tasks
+- ✅ Image processing
+- ✅ PDF generation
+- ✅ Complex npm package dependencies
+- ✅ WebSocket connections
+
+## Best Practices Checklist
+
+- [ ] Evaluate if Edge Runtime benefits your use case
+- [ ] Check all dependencies are Edge-compatible
+- [ ] Use Web APIs instead of Node.js APIs
+- [ ] Implement proper error handling
+- [ ] Test performance improvements
+- [ ] Monitor cold start times
+- [ ] Use streaming for large responses
+- [ ] Implement caching where appropriate
+- [ ] Keep bundle size minimal
+- [ ] Test in production-like environment

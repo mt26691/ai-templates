@@ -11,20 +11,32 @@ A TypeScript command-line tool for generating AI-specific templates for differen
 - 📋 Ready-to-use configuration files
 - 🎨 Colorful and intuitive interface
 
-## Installation
+## Quick Setup
 
-### From npm (when published)
+### Prerequisites
+- Node.js 14.0.0 or higher
+- npm, yarn, or pnpm
 
+### Installation
+
+#### Option 1: From npm (when published)
 ```bash
 npm install -g ai-templates-cli
 ```
 
-### From source
-
+#### Option 2: From source
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/ai-templates-cli.git
 cd ai-templates-cli
+
+# Install dependencies
 npm install
+
+# Build the project
+npm run build
+
+# Link globally
 npm link
 ```
 

@@ -1,0 +1,259 @@
+---
+description: Tailwind CSS class naming conventions and best practices
+globs: **/*.{tsx,jsx,ts,js}
+alwaysApply: true
+---
+
+# Tailwind CSS Class Naming Standards
+
+## Class Organization
+
+### Order of Classes
+```tsx
+// Follow this order for consistency:
+// 1. Layout (display, position, grid/flex)
+// 2. Spacing (margin, padding)
+// 3. Sizing (width, height)
+// 4. Typography (font, text)
+// 5. Visual (background, border, shadow)
+// 6. Effects (opacity, transform, transition)
+// 7. Responsive modifiers
+// 8. State modifiers (hover, focus, active)
+
+// ✅ Good
+<div className="flex flex-col p-4 w-full text-lg bg-white rounded-lg shadow-md transition-all hover:shadow-lg" />
+
+// ❌ Bad - unorganized
+<div className="bg-white flex hover:shadow-lg p-4 text-lg w-full shadow-md flex-col rounded-lg transition-all" />
+```
+
+## Utility Functions
+
+### CN Helper (clsx + tailwind-merge)
+```typescript
+// lib/utils.ts
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+```
+
+### Usage with CN
+```tsx
+// ✅ Good - using cn for conditional classes
+<button
+  className={cn(
+    'px-4 py-2 rounded-md font-medium transition-colors',
+    'bg-blue-500 text-white hover:bg-blue-600',
+    {
+      'opacity-50 cursor-not-allowed': disabled,
+      'bg-red-500 hover:bg-red-600': variant === 'danger',
+    }
+  )}
+/>
+
+// ❌ Bad - string concatenation
+<button className={`px-4 py-2 ${disabled ? 'opacity-50' : ''}`} />
+```
+
+## Component Patterns
+
+### Base + Variant Pattern
+```tsx
+// Button.tsx
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'underline-offset-4 hover:underline text-primary',
+      },
+      size: {
+        default: 'h-10 py-2 px-4',
+        sm: 'h-9 px-3 rounded-md',
+        lg: 'h-11 px-8 rounded-md',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+)
+```
+
+### Composition Pattern
+```tsx
+// ✅ Good - composable classes
+const Card = ({ className, ...props }) => (
+  <div className={cn('rounded-lg border bg-card text-card-foreground shadow-sm', className)} {...props} />
+)
+
+const CardHeader = ({ className, ...props }) => (
+  <div className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />
+)
+```
+
+## Responsive Design
+
+### Mobile-First Approach
+```tsx
+// ✅ Good - mobile-first with progressive enhancement
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  <div className="p-4 md:p-6 lg:p-8">
+    <h2 className="text-xl md:text-2xl lg:text-3xl">Title</h2>
+  </div>
+</div>
+
+// ❌ Bad - desktop-first
+<div className="grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
+```
+
+### Responsive Utilities
+```tsx
+// Common responsive patterns
+const responsivePatterns = {
+  // Container widths
+  container: 'w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8',
+  
+  // Text sizes
+  heading: 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl',
+  
+  // Spacing
+  section: 'py-8 sm:py-12 md:py-16 lg:py-20',
+  
+  // Grid layouts
+  grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6',
+}
+```
+
+## Dark Mode Support
+
+### Color Classes
+```tsx
+// ✅ Good - explicit dark mode classes
+<div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <p className="text-gray-600 dark:text-gray-400">Subtitle</p>
+</div>
+
+// ✅ Better - using CSS variables
+<div className="bg-background text-foreground">
+  <p className="text-muted-foreground">Subtitle</p>
+</div>
+```
+
+### Theme Configuration
+```js
+// tailwind.config.js
+module.exports = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+      },
+    },
+  },
+}
+```
+
+## Performance Optimization
+
+### Avoid Dynamic Classes
+```tsx
+// ❌ Bad - dynamic class generation
+<div className={`text-${size} bg-${color}-500`} />
+
+// ✅ Good - static classes with conditions
+const sizeClasses = {
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-lg',
+}
+<div className={cn(sizeClasses[size], colors[color])} />
+```
+
+### Extract Common Patterns
+```tsx
+// styles/components.ts
+export const buttonStyles = {
+  base: 'inline-flex items-center justify-center rounded-md font-medium transition-colors',
+  sizes: {
+    sm: 'h-9 px-3 text-sm',
+    md: 'h-10 px-4 text-base',
+    lg: 'h-11 px-8 text-lg',
+  },
+  variants: {
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  },
+}
+```
+
+## Naming Conventions
+
+### Custom Utilities
+```css
+/* app/globals.css */
+@layer utilities {
+  /* Use descriptive names */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Prefix custom utilities */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.400') transparent;
+  }
+}
+```
+
+### Component Classes
+```tsx
+// ✅ Good - semantic component classes
+<nav className="nav-primary">
+  <ul className="nav-list">
+    <li className="nav-item">
+      <a className="nav-link" href="#">Link</a>
+    </li>
+  </ul>
+</nav>
+
+// For complex components, combine with Tailwind
+.nav-primary {
+  @apply flex items-center justify-between px-4 py-2;
+}
+```
+
+## Anti-Patterns to Avoid
+
+```tsx
+// ❌ Avoid @apply for single utilities
+.btn { @apply px-4; } // Just use px-4 directly
+
+// ❌ Avoid important modifier overuse
+<div className="!mt-0 !p-0 !text-red-500" />
+
+// ❌ Avoid arbitrary values when standard ones exist
+<div className="w-[384px]" /> // Use w-96 instead
+
+// ❌ Avoid mixing CSS-in-JS with Tailwind
+<div className="flex" style={{ gap: '1rem' }} /> // Use gap-4
+
+// ❌ Avoid overly specific selectors
+<div className="hover:focus:active:bg-blue-500" /> // Too specific
+```

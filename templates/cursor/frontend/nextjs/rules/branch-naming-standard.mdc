@@ -1,0 +1,160 @@
+---
+description: Git branch naming standards and conventions
+globs: .git/**
+alwaysApply: true
+---
+
+# Branch Naming Standards
+
+## Branch Types and Prefixes
+
+### Feature Branches
+- Pattern: `feature/[ticket-id]-[brief-description]`
+- Example: `feature/PROJ-123-add-user-authentication`
+- Purpose: New features and enhancements
+
+### Bug Fix Branches
+- Pattern: `bugfix/[ticket-id]-[brief-description]`
+- Example: `bugfix/PROJ-456-fix-login-redirect`
+- Purpose: Bug fixes in development
+
+### Hotfix Branches
+- Pattern: `hotfix/[ticket-id]-[brief-description]`
+- Example: `hotfix/PROJ-789-critical-payment-issue`
+- Purpose: Critical fixes for production
+
+### Release Branches
+- Pattern: `release/[version]`
+- Example: `release/v1.2.0`
+- Purpose: Prepare for production release
+
+### Chore Branches
+- Pattern: `chore/[brief-description]`
+- Example: `chore/update-dependencies`
+- Purpose: Maintenance tasks, dependency updates
+
+### Documentation Branches
+- Pattern: `docs/[brief-description]`
+- Example: `docs/api-documentation`
+- Purpose: Documentation only changes
+
+## Naming Rules
+
+### General Guidelines
+- Use lowercase only
+- Separate words with hyphens (-)
+- Keep descriptions brief but meaningful
+- Include ticket/issue ID when available
+- Maximum 50 characters for branch name
+
+### Forbidden Patterns
+- No spaces or special characters
+- No personal names (e.g., johns-branch)
+- No generic names (e.g., fix, update, test)
+- No dates in branch names
+- No uppercase letters
+
+## Git Hooks for Validation
+
+### Pre-push Hook Example
+```bash
+#!/bin/bash
+# .git/hooks/pre-push
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+valid_pattern="^(feature|bugfix|hotfix|release|chore|docs)\/[a-z0-9-]+$"
+
+if [[ ! "$branch" =~ $valid_pattern ]]; then
+  echo "Branch name '$branch' does not follow naming standards."
+  echo "Expected format: type/description"
+  echo "Types: feature, bugfix, hotfix, release, chore, docs"
+  exit 1
+fi
+```
+
+### Husky Configuration
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-push": "bash .husky/validate-branch-name.sh"
+    }
+  }
+}
+```
+
+## Branch Lifecycle
+
+### Creation
+```bash
+# Create from latest main
+git checkout main
+git pull origin main
+git checkout -b feature/PROJ-123-new-feature
+
+# Create from specific branch
+git checkout -b bugfix/PROJ-456-fix-issue origin/develop
+```
+
+### Merging Strategy
+- Feature branches → develop
+- Bugfix branches → develop
+- Hotfix branches → main and develop
+- Release branches → main (tag) and develop
+
+### Cleanup
+```bash
+# Delete local branch
+git branch -d feature/PROJ-123-new-feature
+
+# Delete remote branch
+git push origin --delete feature/PROJ-123-new-feature
+
+# Prune remote tracking branches
+git remote prune origin
+```
+
+## CI/CD Integration
+
+### GitHub Actions Example
+```yaml
+name: Validate Branch Name
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          branch=${GITHUB_HEAD_REF}
+          if [[ ! "$branch" =~ ^(feature|bugfix|hotfix|release|chore|docs)\/[a-z0-9-]+$ ]]; then
+            echo "Invalid branch name: $branch"
+            exit 1
+          fi
+```
+
+## Team Conventions
+
+### Protected Branches
+- `main` - Production code
+- `develop` - Integration branch
+- `staging` - Pre-production testing
+
+### Branch Permissions
+- Only leads can create release branches
+- Hotfix branches require approval
+- Feature branches open to all developers
+
+### Commit Message Format
+When working in branches, maintain consistent commit messages:
+```
+type(scope): brief description
+
+Longer description if needed
+
+Refs: PROJ-123
+```

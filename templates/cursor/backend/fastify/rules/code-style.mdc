@@ -5,16 +5,16 @@
 ```
 src/
 ├── routes/
-│   ├── users.js
-│   └── posts.js
+│   ├── users.ts
+│   └── posts.ts
 ├── plugins/
-│   ├── db.js
-│   └── auth.js
+│   ├── db.ts
+│   └── auth.ts
 ├── schemas/
-│   ├── user.js
-│   └── post.js
+│   ├── user.ts
+│   └── post.ts
 ├── utils/
-└── app.js
+└── app.ts
 ```
 
 ### Routing

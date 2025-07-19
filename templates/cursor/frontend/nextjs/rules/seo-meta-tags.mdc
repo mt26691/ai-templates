@@ -1,0 +1,241 @@
+---
+description: SEO and meta tag implementation guidelines for Next.js
+globs: app/**/page.tsx,app/**/layout.tsx,pages/**/*.{tsx,jsx}
+alwaysApply: true
+---
+
+# SEO Meta Tags Guidelines
+
+## Metadata API (App Router)
+
+### Static Metadata
+```typescript
+// app/page.tsx
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Page Title - Site Name',
+  description: 'Compelling description under 160 characters for search engines.',
+  keywords: ['keyword1', 'keyword2', 'keyword3'],
+  authors: [{ name: 'Author Name' }],
+  creator: 'Company Name',
+  publisher: 'Company Name',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+}
+```
+
+### Dynamic Metadata
+```typescript
+// app/products/[id]/page.tsx
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const product = await getProduct(params.id)
+  
+  return {
+    title: `${product.name} - Shop Name`,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      images: [product.image],
+    },
+  }
+}
+```
+
+## Open Graph Tags
+
+### Complete Open Graph Implementation
+```typescript
+export const metadata: Metadata = {
+  openGraph: {
+    title: 'Page Title',
+    description: 'Page description',
+    url: 'https://example.com/page',
+    siteName: 'Site Name',
+    images: [
+      {
+        url: 'https://example.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Description of image',
+      }
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+}
+```
+
+### Article-Specific Tags
+```typescript
+export const metadata: Metadata = {
+  openGraph: {
+    title: 'Article Title',
+    description: 'Article summary',
+    type: 'article',
+    publishedTime: '2024-01-01T00:00:00.000Z',
+    authors: ['Author Name'],
+    tags: ['tag1', 'tag2'],
+  },
+}
+```
+
+## Twitter/X Card Tags
+
+### Twitter Card Implementation
+```typescript
+export const metadata: Metadata = {
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Page Title',
+    description: 'Page description',
+    creator: '@username',
+    site: '@site',
+    images: ['https://example.com/twitter-image.png'],
+  },
+}
+```
+
+## Structured Data (JSON-LD)
+
+### Organization Schema
+```typescript
+// app/layout.tsx
+export default function RootLayout({ children }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Company Name',
+    url: 'https://example.com',
+    logo: 'https://example.com/logo.png',
+    sameAs: [
+      'https://twitter.com/company',
+      'https://facebook.com/company',
+      'https://linkedin.com/company/company',
+    ],
+  }
+
+  return (
+    <html>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+### Product Schema
+```typescript
+const productJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  description: product.description,
+  image: product.images,
+  sku: product.sku,
+  offers: {
+    '@type': 'Offer',
+    price: product.price,
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+  },
+}
+```
+
+## Canonical URLs
+
+### Implementation
+```typescript
+export const metadata: Metadata = {
+  alternates: {
+    canonical: 'https://example.com/page',
+    languages: {
+      'en-US': 'https://example.com/en-US/page',
+      'es-ES': 'https://example.com/es-ES/page',
+    },
+  },
+}
+```
+
+## Robots Meta Tags
+
+### Control Indexing
+```typescript
+export const metadata: Metadata = {
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+```
+
+## Best Practices
+
+### Title Tags
+- Keep under 60 characters
+- Include primary keyword
+- Make unique for each page
+- Format: "Page Title | Brand Name"
+
+### Meta Descriptions
+- Keep under 160 characters
+- Include call-to-action
+- Make compelling and unique
+- Include target keywords naturally
+
+### Image Optimization
+- Use 1200x630px for Open Graph
+- Use 1200x600px minimum for Twitter
+- Provide alt text for all images
+- Use next/image for automatic optimization
+
+### Performance Considerations
+- Generate metadata at build time when possible
+- Use static metadata for unchanging content
+- Implement proper caching strategies
+- Minimize JavaScript execution for metadata
+
+## Testing and Validation
+
+### Tools for Testing
+```typescript
+// Use these tools to validate implementation:
+// - Google Rich Results Test
+// - Facebook Sharing Debugger
+// - Twitter Card Validator
+// - LinkedIn Post Inspector
+
+// Example test setup
+describe('SEO Metadata', () => {
+  it('should have required meta tags', () => {
+    render(<Page />)
+    
+    expect(document.title).toBe('Expected Title')
+    expect(document.querySelector('meta[name="description"]')?.content)
+      .toBe('Expected description')
+  })
+})
+```
+
+### Monitoring
+- Set up Google Search Console
+- Monitor Core Web Vitals
+- Track organic traffic metrics
+- Regular audit with Lighthouse

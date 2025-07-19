@@ -1,0 +1,281 @@
+---
+description: Prefer const over let for variable declarations
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: true
+---
+
+# Prefer Const Over Let
+
+## Use Const by Default
+
+### Basic Rule
+```typescript
+// ✅ Good - use const for values that won't be reassigned
+const userName = 'John Doe'
+const userAge = 25
+const isActive = true
+const config = { apiUrl: 'https://api.example.com' }
+
+// ❌ Bad - using let when reassignment isn't needed
+let userName = 'John Doe'
+let userAge = 25
+let isActive = true
+```
+
+### When to Use Let
+```typescript
+// ✅ Good - use let only when reassignment is necessary
+let counter = 0
+for (let i = 0; i < 10; i++) {
+  counter += i
+}
+
+let status = 'pending'
+try {
+  await processData()
+  status = 'completed'
+} catch (error) {
+  status = 'failed'
+}
+
+// Loop variables
+for (let i = 0; i < array.length; i++) {
+  // i needs to be reassigned
+}
+```
+
+## Object and Array Mutations
+
+### Const with Mutable Data
+```typescript
+// ✅ Good - const prevents reassignment, not mutation
+const user = { name: 'John', age: 25 }
+user.age = 26 // This is allowed
+
+const numbers = [1, 2, 3]
+numbers.push(4) // This is allowed
+
+// ❌ Bad - reassignment will throw error
+const user = { name: 'John' }
+user = { name: 'Jane' } // Error: Assignment to constant variable
+```
+
+### Immutable Updates
+```typescript
+// ✅ Good - create new objects/arrays instead of mutating
+const user = { name: 'John', age: 25 }
+const updatedUser = { ...user, age: 26 }
+
+const numbers = [1, 2, 3]
+const moreNumbers = [...numbers, 4]
+
+// React state updates
+const [users, setUsers] = useState([])
+setUsers(prevUsers => [...prevUsers, newUser]) // Immutable update
+```
+
+## Function Parameters
+
+### Default Const Behavior
+```typescript
+// Function parameters are effectively const
+function processUser(user: User) {
+  // ❌ Bad - avoid reassigning parameters
+  user = { ...user, processed: true }
+  
+  // ✅ Good - create new variable
+  const processedUser = { ...user, processed: true }
+  return processedUser
+}
+
+// ✅ Good - destructure and create new objects
+function updateUserName({ name, ...rest }: User, newName: string) {
+  return { ...rest, name: newName }
+}
+```
+
+## Loops and Iterations
+
+### For Loops
+```typescript
+// ✅ Good - let for loop counters
+for (let i = 0; i < items.length; i++) {
+  const item = items[i] // const for non-reassigned values
+  console.log(item)
+}
+
+// ✅ Good - const in for...of loops
+for (const item of items) {
+  // item is not reassigned within the loop
+  processItem(item)
+}
+
+// ✅ Good - const in for...in loops
+for (const key in object) {
+  const value = object[key]
+  console.log(key, value)
+}
+```
+
+### Array Methods
+```typescript
+// ✅ Good - const in array method callbacks
+const doubled = numbers.map(num => {
+  const result = num * 2
+  return result
+})
+
+const filtered = users.filter(user => {
+  const isValid = user.age >= 18
+  return isValid
+})
+
+// forEach with const
+items.forEach(item => {
+  const processed = processItem(item)
+  console.log(processed)
+})
+```
+
+## Conditional Assignments
+
+### Ternary Operations
+```typescript
+// ✅ Good - const with conditional assignment
+const status = isActive ? 'active' : 'inactive'
+const user = data ?? defaultUser
+const message = error || 'Success'
+
+// ❌ Avoid - unnecessary let
+let status
+if (isActive) {
+  status = 'active'
+} else {
+  status = 'inactive'
+}
+```
+
+### Complex Conditionals
+```typescript
+// ✅ Good - function for complex logic
+const getUserRole = (user: User): Role => {
+  if (user.isAdmin) return 'admin'
+  if (user.isModerator) return 'moderator'
+  return 'user'
+}
+
+const userRole = getUserRole(currentUser)
+
+// ✅ Alternative - immediately invoked function
+const userRole = (() => {
+  if (user.isAdmin) return 'admin'
+  if (user.isModerator) return 'moderator'
+  return 'user'
+})()
+```
+
+## Async Operations
+
+### Promises and Async/Await
+```typescript
+// ✅ Good - const for promise results
+const response = await fetch('/api/users')
+const data = await response.json()
+
+// ✅ Good - const for error handling
+try {
+  const result = await processData()
+  return result
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+  console.error(errorMessage)
+}
+
+// Promise chains
+const processedData = fetchData()
+  .then(data => {
+    const filtered = data.filter(item => item.active)
+    return filtered
+  })
+  .catch(error => {
+    const defaultData = []
+    return defaultData
+  })
+```
+
+## React Component Patterns
+
+### Component Props and State
+```typescript
+// ✅ Good - const for props and hooks
+export function UserProfile({ userId }: Props) {
+  const user = useUser(userId)
+  const [isEditing, setIsEditing] = useState(false)
+  const router = useRouter()
+  
+  const handleSave = useCallback(async (data: UserData) => {
+    const updated = await updateUser(userId, data)
+    setIsEditing(false)
+    return updated
+  }, [userId])
+  
+  return <div>{/* ... */}</div>
+}
+```
+
+### Event Handlers
+```typescript
+// ✅ Good - const for event handlers
+const handleClick = (event: MouseEvent) => {
+  const target = event.currentTarget
+  const value = target.getAttribute('data-value')
+  processValue(value)
+}
+
+const handleSubmit = async (event: FormEvent) => {
+  event.preventDefault()
+  const formData = new FormData(event.target as HTMLFormElement)
+  const values = Object.fromEntries(formData)
+  await submitForm(values)
+}
+```
+
+## ESLint Configuration
+
+### Enforce Prefer-Const
+```json
+// .eslintrc.json
+{
+  "rules": {
+    "prefer-const": ["error", {
+      "destructuring": "any",
+      "ignoreReadBeforeAssign": false
+    }],
+    "no-const-assign": "error"
+  }
+}
+```
+
+### Auto-fix with ESLint
+```bash
+# Auto-fix let to const where possible
+npx eslint --fix src/**/*.{ts,tsx}
+```
+
+## Best Practices
+
+### Variable Declaration Guidelines
+1. Always start with `const`
+2. Only use `let` when reassignment is required
+3. Never use `var` in modern JavaScript/TypeScript
+4. Prefer immutable updates over mutations
+5. Use destructuring to avoid reassignment
+
+### Code Review Checklist
+- [ ] All variables use const unless reassignment needed
+- [ ] No unnecessary let declarations
+- [ ] Objects and arrays updated immutably where appropriate
+- [ ] Function parameters not reassigned
+- [ ] Loop variables use appropriate declaration
+- [ ] ESLint prefer-const rule enabled
+- [ ] No var declarations in codebase
