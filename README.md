@@ -182,7 +182,7 @@ If you're not comfortable with creating a pull request or want to discuss an ide
    - 🐛 Bug Report
    - ✨ Feature Request
    - 📚 Documentation Update
-   - 💡 General Idea/Discussion
+   - 💡 General Idea
 
 ### 🚀 Our Commitment
 
@@ -203,7 +203,6 @@ If you're not comfortable with creating a pull request or want to discuss an ide
 ## 📬 Support
 
 - **Issues**: [GitHub Issues](https://github.com/mt26691/ai-templates-cli/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/mt26691/ai-templates-cli/discussions)
 
 ### Priority Support
 

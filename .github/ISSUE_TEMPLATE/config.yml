@@ -1,8 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 GitHub Discussions
-    url: https://github.com/mt26691/ai-templates-cli/discussions
-    about: Ask questions and discuss ideas with the community
   - name: 📖 Documentation
     url: https://github.com/mt26691/ai-templates-cli#readme
     about: Check out our comprehensive documentation
