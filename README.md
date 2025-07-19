@@ -1,6 +1,10 @@
 # AI Templates CLI
 
-A TypeScript command-line tool for generating AI-specific templates for different frameworks and technologies. This tool helps developers quickly set up configuration files and guidelines for popular AI tools like Cursor, Claude, and Gemini.
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
+**An open-source TypeScript command-line tool for generating AI-specific templates for different frameworks and technologies.** This tool helps developers quickly set up configuration files and guidelines for popular AI tools like Cursor, Claude, and Gemini.
 
 ## Features
 
@@ -26,31 +30,11 @@ A TypeScript command-line tool for generating AI-specific templates for differen
 npm install -g ai-templates-cli
 ```
 
-#### Option 2: From source
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ai-templates-cli.git
-cd ai-templates-cli
-
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
-
-# Link globally
-npm link
-```
-
 ## Usage
 
 ```bash
 # Run the CLI tool
 ai-templates
-
-# Or if running from source
-npm start
 ```
 
 The tool guides you through 3 simple steps:
@@ -181,22 +165,72 @@ npm test            # Run tests
 3. Update the `FRAMEWORK_OPTIONS` in `src/index.ts` if needed
 4. Run `npm run build` to compile TypeScript changes
 
-### Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Add your templates or improvements
-4. Submit a pull request
+We welcome contributions from the community! This is an open-source project and we're committed to making it better with your help.
 
-## License
+### How to Contribute
 
-MIT License - see LICENSE file for details
+#### Option 1: Submit a Pull Request (Recommended)
 
-## Support
+#### Option 2: Create an Issue
 
-- Report issues on GitHub
-- Feature requests welcome
-- Pull requests appreciated
+If you're not comfortable with creating a pull request or want to discuss an idea first:
+
+1. **Open an Issue** on our [GitHub Issues](https://github.com/yourusername/ai-templates-cli/issues)
+2. Use the appropriate issue template:
+   - 🐛 Bug Report
+   - ✨ Feature Request
+   - 📚 Documentation Update
+   - 💡 General Idea/Discussion
+
+### 🚀 Our Commitment
+
+**We are committed to responding to all issues within 24 hours!**
+
+- ✅ Issue acknowledgment within 24 hours
+- ✅ We'll work on accepted issues promptly
+- ✅ Regular updates on progress
+- ✅ Clear communication throughout the process
+
+### Contribution Guidelines
+
+- **Code Style**: Follow the existing code style (TypeScript, ESLint rules)
+- **Templates**: Ensure templates are well-documented and follow best practices
+- **Testing**: Add tests for new functionality when applicable
+- **Documentation**: Update README.md if you're adding new features
+
+### What We're Looking For
+
+- 🎯 New AI tool support (e.g., GitHub Copilot, Amazon CodeWhisperer)
+- 📦 Additional framework templates
+- 🐛 Bug fixes and improvements
+- 📚 Documentation enhancements
+- 🌐 Internationalization support
+- ⚡ Performance optimizations
+
+## 📬 Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/ai-templates-cli/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-templates-cli/discussions)
+- **Email**: support@example.com (optional)
+
+### Priority Support
+
+- 🔴 **Critical Bugs**: Fixed within 24 hours
+- 🟡 **Feature Requests**: Reviewed within 24 hours
+- 🟢 **Enhancements**: Implemented based on community interest
+
+## 🙏 Acknowledgments
+
+Thanks to all our contributors! This project exists because of your support.
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. This means you can freely use, modify, distribute, and sell this software.
 
 ## Changelog
 
