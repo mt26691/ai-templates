@@ -1,5 +1,5 @@
 {
-  "name": "ai-templates-cli",
+  "name": "ai-templates",
   "version": "1.0.0",
   "description": "CLI tool for generating AI templates for different frameworks and tools",
   "main": "dist/index.js",
@@ -44,10 +44,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/ai-templates-cli.git"
+    "url": "git+https://github.com/yourusername/ai-templates.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ai-templates-cli/issues"
+    "url": "https://github.com/yourusername/ai-templates/issues"
   },
-  "homepage": "https://github.com/yourusername/ai-templates-cli#readme"
+  "homepage": "https://github.com/yourusername/ai-templates#readme"
 }

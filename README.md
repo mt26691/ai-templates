@@ -27,7 +27,7 @@
 #### Option 1: From npm (when published)
 
 ```bash
-npm install -g ai-templates-cli
+npm install -g ai-templates
 ```
 
 ## Usage
@@ -129,7 +129,7 @@ your-project/
 ### Project Structure
 
 ```
-ai-templates-cli/
+ai-templates/
 ├── src/
 │   ├── cli.ts              # CLI entry point
 │   └── index.ts            # Main application logic
@@ -177,7 +177,7 @@ We welcome contributions from the community! This is an open-source project and 
 
 If you're not comfortable with creating a pull request or want to discuss an idea first:
 
-1. **Open an Issue** on our [GitHub Issues](https://github.com/mt26691/ai-templates-cli/issues)
+1. **Open an Issue** on our [GitHub Issues](https://github.com/mt26691/ai-templates/issues)
 2. Use the appropriate issue template:
    - 🐛 Bug Report
    - ✨ Feature Request
@@ -202,7 +202,7 @@ If you're not comfortable with creating a pull request or want to discuss an ide
 
 ## 📬 Support
 
-- **Issues**: [GitHub Issues](https://github.com/mt26691/ai-templates-cli/issues)
+- **Issues**: [GitHub Issues](https://github.com/mt26691/ai-templates/issues)
 
 ### Priority Support
 
