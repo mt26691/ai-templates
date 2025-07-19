@@ -44,10 +44,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/ai-templates.git"
+    "url": "git+https://github.com/mt26691/ai-templates.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/ai-templates/issues"
+    "url": "https://github.com/mt26691/ai-templates/issues"
   },
-  "homepage": "https://github.com/yourusername/ai-templates#readme"
+  "homepage": "https://github.com/mt26691/ai-templates#readme",
+  "files": [
+    "dist/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ]
 }

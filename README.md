@@ -6,6 +6,13 @@
 
 **An open-source TypeScript command-line tool for generating AI-specific templates for different frameworks and technologies.** This tool helps developers quickly set up configuration files and guidelines for popular AI tools like Cursor, Claude, and Gemini.
 
+## Why we have this?
+
+Because wiring up AI tools shouldn’t feel like debugging a quantum computer with a rubber duck. We built **AI Templates CLI** to:
+
+1. **Unleash vibey coding super-powers** – even if your day job is more “spreadsheet sorcerer” than “kernel hacker.” One command and _bam_: sensible lint rules, a shiny `claude.md`, and repo guidelines that make it look like you hired a senior engineer who main-lines espresso. ☕⚡
+2. **Save humanity from the copy-pasting apocalypse** – every new project needs the same boilerplate. We automated it so you can spend your time shipping features (or scrolling cat memes, no judgment). Contribute your tweaks and together we’ll forge the ultimate starter kit for every AI tool on Earth. 🌍🤖
+
 ## Features
 
 - 🚀 Interactive CLI with guided selection
