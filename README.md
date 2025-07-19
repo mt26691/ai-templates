@@ -14,17 +14,20 @@ A TypeScript command-line tool for generating AI-specific templates for differen
 ## Quick Setup
 
 ### Prerequisites
-- Node.js 14.0.0 or higher
+
+- Node.js 18.0.0 or higher
 - npm, yarn, or pnpm
 
 ### Installation
 
 #### Option 1: From npm (when published)
+
 ```bash
 npm install -g ai-templates-cli
 ```
 
 #### Option 2: From source
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/ai-templates-cli.git
@@ -42,23 +45,19 @@ npm link
 
 ## Usage
 
-Run the CLI tool:
-
 ```bash
+# Run the CLI tool
 ai-templates
-```
 
-Or if running from source:
-
-```bash
+# Or if running from source
 npm start
 ```
 
-The tool will guide you through three simple steps:
+The tool guides you through 3 simple steps:
 
-1. **Select AI Tool**: Choose from Cursor, Claude, or Gemini
-2. **Select Category**: Choose from Backend, Frontend, or Infrastructure
-3. **Select Framework**: Choose from available frameworks for your category
+1. **Select AI Tool** - Cursor, Claude.
+2. **Select Category** - Backend, Frontent.
+3. **Select Framework** - Framework-specific templates
 
 ## Supported Templates
 
@@ -66,19 +65,11 @@ The tool will guide you through three simple steps:
 
 - **Backend**: Fastify, NestJS, Koa, Express, Hapi
 - **Frontend**: React, Vue, Angular, Svelte, Next.js
-- **Infrastructure**: Docker, Kubernetes, Terraform, AWS CDK, Pulumi
 
 ### Claude (project_knowledge.md)
 
 - **Backend**: Fastify, NestJS, Koa, Express, Hapi
 - **Frontend**: React, Vue, Angular, Svelte, Next.js
-- **Infrastructure**: Docker, Kubernetes, Terraform, AWS CDK, Pulumi
-
-### Gemini
-
-- **Backend**: Fastify, NestJS, Koa, Express, Hapi
-- **Frontend**: React, Vue, Angular, Svelte, Next.js
-- **Infrastructure**: Docker, Kubernetes, Terraform, AWS CDK, Pulumi
 
 ## Examples
 
@@ -149,14 +140,6 @@ your-project/
 - Development guidelines
 - Security considerations
 
-### Gemini Templates
-
-- Framework-specific configurations
-- Development workflows
-- Best practices and patterns
-- Tool recommendations
-- Performance guidelines
-
 ## Development
 
 ### Project Structure
@@ -204,12 +187,6 @@ npm test            # Run tests
 2. Create a feature branch
 3. Add your templates or improvements
 4. Submit a pull request
-
-## Requirements
-
-- Node.js 14.0.0 or higher
-- npm or yarn
-- TypeScript 5.0.0 or higher (for development)
 
 ## License
 
