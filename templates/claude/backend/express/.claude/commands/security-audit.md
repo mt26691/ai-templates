@@ -1,4 +1,4 @@
-# Security Audit Guide - Backend (Fastify)
+# Security Audit Guide - Backend (Express)
 
 This command provides a comprehensive security audit process for your backend application.
 

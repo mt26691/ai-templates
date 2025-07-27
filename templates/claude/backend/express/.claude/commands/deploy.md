@@ -1,4 +1,4 @@
-# Deployment Guide - Backend (Fastify)
+# Deployment Guide - Backend (Express)
 
 This command guides you through deploying your backend application to various environments.
 

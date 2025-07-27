@@ -1,4 +1,4 @@
-# Database Migration Guide - Backend (Fastify)
+# Database Migration Guide - Backend (Express)
 
 This command helps you manage database schema changes safely and efficiently.
 

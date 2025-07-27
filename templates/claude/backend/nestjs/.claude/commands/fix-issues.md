@@ -1,4 +1,4 @@
-# Fix GitHub Issues - Backend (Fastify)
+# Fix GitHub Issues - Backend (NestJS)
 
 This command helps you systematically fix GitHub issues with proper planning, documentation, and testing.
 

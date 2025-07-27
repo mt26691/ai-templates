@@ -1,4 +1,4 @@
-# Setup Project - Backend (Fastify)
+# Setup Project - Backend (NestJS)
 
 This command guides you through setting up a new project or onboarding to an existing project.
 

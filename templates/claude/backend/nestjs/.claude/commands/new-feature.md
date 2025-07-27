@@ -1,4 +1,4 @@
-# New Feature Development - Backend (Fastify)
+# New Feature Development - Backend (NestJS)
 
 This command guides you through developing new features following best practices and ensuring comprehensive implementation.
 

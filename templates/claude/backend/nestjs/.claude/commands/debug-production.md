@@ -1,4 +1,4 @@
-# Production Debugging Guide - Backend (Fastify)
+# Production Debugging Guide - Backend (NestJS)
 
 This command helps you debug issues in production environments safely and effectively.
 

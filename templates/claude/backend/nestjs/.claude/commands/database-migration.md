@@ -1,4 +1,4 @@
-# Database Migration Guide - Backend (Fastify)
+# Database Migration Guide - Backend (NestJS)
 
 This command helps you manage database schema changes safely and efficiently.
 
