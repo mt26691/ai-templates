@@ -106,7 +106,8 @@ your-project/
 │   └── rules/
 │       └── rules.mdc
 ├── .claude/          # Claude templates
-│   └── project_knowledge.md
+│   ├── project_knowledge.md
+│   └── commands/     # Workflow command guides
 └── .gemini/          # Gemini templates
     └── ...
 ```
@@ -130,6 +131,7 @@ your-project/
 - Key dependencies and tools
 - Development guidelines
 - Security considerations
+- **Workflow Commands**: Step-by-step guides for common development tasks like fixing issues, deploying, refactoring, and security audits
 
 ## Development
 

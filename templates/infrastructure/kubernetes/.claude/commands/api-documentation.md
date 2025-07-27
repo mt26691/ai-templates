@@ -1,4 +1,4 @@
-# API Documentation Guide - Backend (Fastify)
+# API Documentation Guide - Infrastructure (Kubernetes)
 
 This command helps you create and maintain comprehensive API documentation.
 

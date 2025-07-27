@@ -1,4 +1,4 @@
-# Deployment Guide - Backend (Fastify)
+# Deployment Guide - Infrastructure (Kubernetes)
 
 This command guides you through deploying your backend application to various environments.
 

@@ -1,4 +1,4 @@
-# Code Refactoring Guide - Backend (Fastify)
+# Code Refactoring Guide - Infrastructure (Kubernetes)
 
 This command helps you systematically refactor code while maintaining functionality and improving quality.
 

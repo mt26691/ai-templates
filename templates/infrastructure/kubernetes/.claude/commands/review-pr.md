@@ -1,4 +1,4 @@
-# Pull Request Review Guide - Backend (Fastify)
+# Pull Request Review Guide - Infrastructure (Kubernetes)
 
 This command provides a comprehensive checklist and process for reviewing pull requests effectively.
 

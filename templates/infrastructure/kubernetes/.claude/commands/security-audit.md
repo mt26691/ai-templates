@@ -1,4 +1,4 @@
-# Security Audit Guide - Backend (Fastify)
+# Security Audit Guide - Infrastructure (Kubernetes)
 
 This command provides a comprehensive security audit process for your backend application.
 
