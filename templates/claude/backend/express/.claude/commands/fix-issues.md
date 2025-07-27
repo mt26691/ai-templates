@@ -1,4 +1,4 @@
-# Fix GitHub Issues - Backend (Express)
+# Fix GitHub Issues - Backend (Fastify)
 
 This command helps you systematically fix GitHub issues with proper planning, documentation, and testing.
 
